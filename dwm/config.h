@@ -37,17 +37,19 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class          instance  title          tags mask    isfloating   monitor */
-	{ "Firefox",       NULL,    NULL,               1<<1,   False,        0 },
-	{ "Claws-mail",    NULL,    NULL,               1,      False,        0 },
-	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 },
-	{ "XCalc",         NULL,    NULL,               0,      True,        -1 },
-	{ "Gimp",          NULL,    NULL,               1<<3,   True,        -1 },
-	{ "Pix2",          NULL,    NULL,               0,      True,        -1 },
+	{ "Firefox",       NULL,    NULL,               1<<1,   False,        0 }, // firefox on tag 2
+	{ "Luakit",        NULL,    NULL,               1<<7,   False,        0 }, // luakit on tag 8
+	{ "Claws-mail",    NULL,    NULL,               1,      False,        0 }, // claws-mail on tag 2
+	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 }, // transmission on tag 9
+	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
+	{ "Gimp",          NULL,    NULL,               1<<3,   True,        -1 }, // gimp free on tag 4
+	{ "Lpx2",          NULL,    NULL,               0,      True,        -1 }, // pix-viewer free notag
 	{ "MPlayer",       "xv",    NULL,               0,      True,        -1 },
 	{ "Gnome-mplayer", NULL,    NULL,               0,      True,        -1 },
 	{ "File-roller",   NULL,    NULL,               0,      True,        -1 },
 	{ "Zenity",        NULL,    NULL,               0,      True,        -1 },
 	{ "Yad",           NULL,    NULL,               0,      True,        -1 },
+	{ NULL,            NULL,    "scratch",          ~0,     True,        -1 }, // scratchpad free on alltag
 	{ NULL,            NULL,    "watch",            0,      True,        -1 },
 	{ NULL,            NULL,    "sound",            0,      True,        -1 },
 	{ "Rox",           NULL,    "Copy",             0,      True,        -1 },
@@ -87,6 +89,7 @@ static const Layout layouts[] = {
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, "-p", "exec:", NULL };
 static const char *termcmd[]  = { "urxvtc", NULL };                                   // terminal
+static const char *scratch[]  = { "urxvtc", "-T", "scratch", "-geometry", "90x9+300+300", NULL }; // fake scratchpad
 static const char *roxcmd[]   = { "rox", NULL };                                      // gui file-manager
 static const char *filecmd[]  = { "urxvtc", "-e", "ranger", NULL };                   // cli file-manager
 static const char *editcmd[]  = { "urxvtc", "-T", "editor", "-e", "vim", NULL };      // cli editor
@@ -103,6 +106,7 @@ static Key keys[] = {
     /* applications */
 	{ MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },   // dmenu           Alt+p
 	{ MODKEY2,                      XK_d,         spawn,          {.v = dmenucmd } },   // dmenu           Super+d
+    { 0,                            XK_F12,       spawn,          {.v = scratch } },    // fake scratchpad F12
     { MODKEY,                       XK_w,         spawn,          {.v = webcmd } },     // firefox         Alt+w
 	{ MODKEY,                       XK_r,         spawn,          {.v = filecmd } },    // ranger          Alt+r
 	{ MODKEY|ShiftMask,             XK_r,         spawn,          {.v = roxcmd } },     // rox-filer       Alt+Shift+r
