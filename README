@@ -1,0 +1,16 @@
+dwm-6.1 patched release 
+
+/* See LICENSE file for copyright and license details. */
+
+/* dwm-arp v2 based on dwm_6.1
+ * patches & mods :
+ * attachabove          http://dwm.suckless.org/patches/attachabove
+ * azertykeys           http://dwm.suckless.org/patches/azertykey
+ * bottomstack          http://dwm.suckless.org/patches/bottom_stack
+ * fancybar             http://dwm.suckless.org/patches/fancybar
+ * float_border_color   http://dwm.suckless.org/patches/float_border_color
+ * push up/down         http://dwm.suckless.org/patches/push
+ * pertag               http://dwm.suckless.org/patches/pertag
+ * view_prev/next_tag   forum post
+ * arpinux@2012 <http://arpinux.org>
+*/
