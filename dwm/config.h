@@ -38,7 +38,7 @@ static const Rule rules[] = {
 	 */
 	/* class          instance  title          tags mask    isfloating   monitor */
 	{ "Firefox",       NULL,    NULL,               1<<1,   False,        0 }, // firefox on tag 2
-	{ "Luakit",        NULL,    NULL,               1<<7,   False,        0 }, // luakit on tag 8
+	{ "luakit",        NULL,    NULL,               1<<7,   False,        0 }, // luakit on tag 8
 	{ "Claws-mail",    NULL,    NULL,               1,      False,        0 }, // claws-mail on tag 2
 	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 }, // transmission on tag 9
 	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
