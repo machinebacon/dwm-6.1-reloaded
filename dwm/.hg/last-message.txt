@@ -1,0 +1,5 @@
+Author: Jan Christoph Ebersbach <jceb@e-jc.de>
+URL: http://dwm.suckless.org/patches/attachabove
+
+attachabove makes new clients attach above the selected client (instead of
+always becoming the new master) – basically how Xmonad does it.
