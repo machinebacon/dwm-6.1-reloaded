@@ -10,6 +10,7 @@
  * push up/down         http://dwm.suckless.org/patches/push
  * pertag               http://dwm.suckless.org/patches/pertag
  * scratchpad           https://github.com/ok100/dwm/blob/master/03-dwm-6.0-scratchpad-stay.diff
+ * cycle-layout         https://bbs.archlinux.org/viewtopic.php?id=103402
  * view_prev/next_tag   forum post
  * arpinux@2012 <http://arpinux.org>
 */
@@ -28,7 +29,7 @@ static const unsigned int borderpx       = 1;         // border pixel of windows
 static const unsigned int snap           = 32;        // snap pixel
 static const Bool showbar                = True;      // False means no bar
 static const Bool topbar                 = False;     // False means bottom bar
-static const char scratchpadname[]       = "scrat";   // scratchpad window title
+static const char scratchpadname[]       = "scratch"; // scratchpad window title
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -39,15 +40,18 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class          instance  title          tags mask    isfloating   monitor */
+	{ "Claws-mail",    NULL,    NULL,               1<<0,   False,        0 }, // claws-mail on tag 1
 	{ "Firefox",       NULL,    NULL,               1<<1,   False,        0 }, // firefox on tag 2
-	{ "luakit",        NULL,    NULL,               1<<7,   False,        0 }, // luakit on tag 8
-	{ "Claws-mail",    NULL,    NULL,               1<<0,   False,        0 }, // claws-mail on tag 2
-	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 }, // transmission on tag 9
-	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
+	{ "luakit",        NULL,    NULL,               1<<1,   False,        0 }, // luakit on tag 2
+	{ NULL,            NULL,    "weechat 0.3.2",    1<<2,   False,       -1 }, // weechat on tag 3
+	{ NULL,            NULL,    "vim",              1<<3,   False,       -1 }, // vim on tag 4
     { "Geany",         NULL,    NULL,               1<<3,   False,       -1 }, // geany on tag 4
 	{ "Gimp",          NULL,    NULL,               1<<4,   True,        -1 }, // gimp free on tag 5
+	{ "Filezilla",     NULL,    NULL,               1<<7,   False,       -1 }, // filezilla on tag 8
+	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 }, // transmission on tag 9
+	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
 	{ "Lpx2",          NULL,    NULL,               0,      True,        -1 }, // pix-viewer free notag
-	{ "MPlayer",       "xv",    NULL,               0,      True,        -1 },
+	{ "MPlayer",       "xv",    NULL,               0,      True,        -1 }, // mplayer free notag
 	{ "Gnome-mplayer", NULL,    NULL,               0,      True,        -1 },
 	{ "File-roller",   NULL,    NULL,               0,      True,        -1 },
 	{ "Zenity",        NULL,    NULL,               0,      True,        -1 },
@@ -64,8 +68,8 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact      = 0.65; // factor of master area size [0.05..0.95]
-static const int nmaster      = 1;    // number of clients in master area
+static const float mfact      = 0.65;  // factor of master area size [0.05..0.95]
+static const int nmaster      = 1;     // number of clients in master area
 static const Bool resizehints = False; // True means respect size hints in tiled resizals
 
 static const Layout layouts[] = {
@@ -74,10 +78,12 @@ static const Layout layouts[] = {
     { "[-]",      bstack },  // [1] bottomstack layout
     { "[O]",      monocle }, // [2] monocle aka maximize all client
 	{ "[ ]",      NULL },    // [3] no layout function means floating behavior
+    { NULL,       NULL },    // here for prev/next layout feature
 };
 
 /* key definitions */
 #define MODKEY Mod1Mask
+#define MODKEY2 Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -90,7 +96,7 @@ static const Layout layouts[] = {
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, "-p", "exec:", NULL };
 static const char *termcmd[]  = { "urxvtc", NULL };                                       // terminal
-static const char *scratcmd[] = { "urxvtc", "-T", "scrat", "-geometry", "90x9+200+300", NULL }; // scratchpad
+static const char *scratcmd[] = { "urxvtc", "-T", "scratch", "-geometry", "90x9", NULL }; // scratchpad
 static const char *roxcmd[]   = { "rox", NULL };                                          // gui file-manager
 static const char *filecmd[]  = { "urxvtc", "-e", "ranger", NULL };                       // cli file-manager
 static const char *editcmd[]  = { "urxvtc", "-T", "editor", "-e", "vim", NULL };          // cli editor
@@ -100,13 +106,24 @@ static const char *luakcmd[]  = { "luakit", "http://arpinux.org/startarp", NULL 
 static const char *webcmd[]   = { "firefox", "http://arpinux.org/startarp", NULL };       // surf the web with firefox
 static const char *chatcmd[]  = { "urxvtc", "-e", "screen", "weechat-curses", NULL };     // open weechat irc client in screen/urxvtc
 static const char *zikcmd[]   = { "urxvtc", "-T", "zik-player", "-e", "mocp", NULL };     // open mocp in urxvtc
+static const char *wwallcmd[] = { "/home/arp/pics/walls/randwalls.sh", NULL };            // random classic wallpaper
+static const char *gwallcmd[] = { "/home/arp/pics/girls/randwalls.sh", NULL };            // random sexy wallpaper
+static const char *dwmccmd[]  = { "urxvtc", "-e", "vim", "pkgs/dwm_arp/config.h", NULL }; // configure dwm/config.h
+static const char *resetcmd[] = { "/home/arp/bin/reset.sh", NULL };                       // restore startup config
+static const char *infoscmd[] = { "/home/arp/bin/infos.sh", NULL };                       // display infos sytem with conky
+static const char *ckycfcmd[] = { "urxvtc", "-e", "vim", ".conkyrc_dwm", NULL };          // configure status text
 /* menus */
+static const char *homecmd[]  = { "dmenu-home.sh", NULL };
+static const char *googcmd[]  = { "dmenu-google.sh", NULL };
 static const char *quitcmd[]  = { "dmenu-quit.sh", NULL };
 
 static Key keys[] = {
 	/* modifier                     key           function        argument */
     /* menus */
     { MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },   // dmenu           Alt+p
+    { MODKEY2,                      XK_d,         spawn,          {.v = dmenucmd } },   // dmenu           Super+d
+    { MODKEY2,                      XK_g,         spawn,          {.v = googcmd } },    // dmenu-google    Super+g
+    { MODKEY2,                      XK_h,         spawn,          {.v = homecmd } },    // dmenu-home      Super+h
     /* applications */
     { 0,                            XK_F12,       togglescratch,  {.v = scratcmd} },    // scratchpad      F12
     { ControlMask,                  XK_Return,    spawn,          {.v = termcmd } },    // terminal        Ctrl+Return
@@ -119,6 +136,12 @@ static Key keys[] = {
 	{ MODKEY,                       XK_v,         spawn,          {.v = volcmd } },     // volume mixer    Alt+v
 	{ MODKEY,                       XK_z,         spawn,          {.v = zikcmd } },     // zik player      Alt+z
 	{ MODKEY,                       XK_x,         spawn,          {.v = chatcmd } },    // irc client      Alt+x
+    /* wall */
+    { MODKEY|ControlMask,           XK_g,         spawn,          {.v = gwallcmd } },   // sexy wall       Ctrl+Alt+g
+    { MODKEY|ControlMask,           XK_w,         spawn,          {.v = wwallcmd } },   // classic wall    Ctrl+Alt+w
+    /* reset & infos */
+    { MODKEY|ControlMask,           XK_i,         spawn,          {.v = infoscmd } },   // infos system    Ctrl+Alt+i
+    { MODKEY|ControlMask,           XK_c,         spawn,          {.v = resetcmd } },   // restore config  Ctrl+Alt+c
     /* navigation */
 	{ MODKEY,                       XK_b,         togglebar,      {0} },                // toggle bar visibility          Alt+b
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },         // focus next client              Alt+j
@@ -137,6 +160,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_m,         setlayout,      {.v = &layouts[2]} }, // set layout 2 monocle           Alt+m
     { MODKEY,                       XK_f,         setlayout,      {.v = &layouts[3]} }, // set layout 3 free              Alt+f
 	{ MODKEY,                       XK_space,     setlayout,      {0} },                // set prev layout                Alt+Space
+    { MODKEY2,                      XK_space,     nextlayout,     {0} },                // next layout                    Super+Space
+	{ MODKEY2|ShiftMask,            XK_space,     prevlayout,     {0} },                // prev layout                    Super+Shift+Space
 	{ MODKEY|ShiftMask,             XK_space,     togglefloating, {0} },                // toggle client floating         Alt+Shift+Space
 	{ MODKEY,                       XK_agrave,    view,           {.ui = ~0 } },        // view alltags                   Alt+à
 	{ MODKEY|ShiftMask,             XK_agrave,    tag,            {.ui = ~0 } },        // tag alltags                    Alt+Shift+à
@@ -155,6 +180,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_egrave,                    6)
 	TAGKEYS(                        XK_underscore,                7)
 	TAGKEYS(                        XK_ccedilla,                  8)
+    { MODKEY|ShiftMask|ControlMask, XK_c,         spawn,          {.v = dwmccmd } },     // configure dwm/config.h        Ctrl+Shift+Alt+c
 	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },                 // exit/reload dwm               Alt+Shift+q
     { MODKEY|ShiftMask|ControlMask, XK_q,         spawn,          {.v = quitcmd } },     // dmenu-quit                    Ctrl+Shift+Alt+q
 };
