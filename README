@@ -12,6 +12,7 @@ dwm-6.1 patched release
  * push up/down         http://dwm.suckless.org/patches/push
  * pertag               http://dwm.suckless.org/patches/pertag
  * scratchpad           https://github.com/ok100/dwm/blob/master/03-dwm-6.0-scratchpad-stay.diff
+ * cycle-layout         https://bbs.archlinux.org/viewtopic.php?id=103402
  * view_prev/next_tag   forum post
  * arpinux@2012 <http://arpinux.org>
 */
