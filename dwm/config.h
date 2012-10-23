@@ -9,6 +9,7 @@
  * float_border_color   http://dwm.suckless.org/patches/float_border_color
  * push up/down         http://dwm.suckless.org/patches/push
  * pertag               http://dwm.suckless.org/patches/pertag
+ * scratchpad           https://github.com/ok100/dwm/blob/master/03-dwm-6.0-scratchpad-stay.diff
  * view_prev/next_tag   forum post
  * arpinux@2012 <http://arpinux.org>
 */
@@ -27,6 +28,7 @@ static const unsigned int borderpx       = 1;         // border pixel of windows
 static const unsigned int snap           = 32;        // snap pixel
 static const Bool showbar                = True;      // False means no bar
 static const Bool topbar                 = False;     // False means bottom bar
+static const char scratchpadname[]       = "scrat";   // scratchpad window title
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -39,17 +41,17 @@ static const Rule rules[] = {
 	/* class          instance  title          tags mask    isfloating   monitor */
 	{ "Firefox",       NULL,    NULL,               1<<1,   False,        0 }, // firefox on tag 2
 	{ "luakit",        NULL,    NULL,               1<<7,   False,        0 }, // luakit on tag 8
-	{ "Claws-mail",    NULL,    NULL,               1,      False,        0 }, // claws-mail on tag 2
+	{ "Claws-mail",    NULL,    NULL,               1<<0,   False,        0 }, // claws-mail on tag 2
 	{ "Transmission",  NULL,    NULL,               1<<8,   False,        0 }, // transmission on tag 9
 	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
-	{ "Gimp",          NULL,    NULL,               1<<3,   True,        -1 }, // gimp free on tag 4
+    { "Geany",         NULL,    NULL,               1<<3,   False,       -1 }, // geany on tag 4
+	{ "Gimp",          NULL,    NULL,               1<<4,   True,        -1 }, // gimp free on tag 5
 	{ "Lpx2",          NULL,    NULL,               0,      True,        -1 }, // pix-viewer free notag
 	{ "MPlayer",       "xv",    NULL,               0,      True,        -1 },
 	{ "Gnome-mplayer", NULL,    NULL,               0,      True,        -1 },
 	{ "File-roller",   NULL,    NULL,               0,      True,        -1 },
 	{ "Zenity",        NULL,    NULL,               0,      True,        -1 },
 	{ "Yad",           NULL,    NULL,               0,      True,        -1 },
-	{ NULL,            NULL,    "scratch",          ~0,     True,        -1 }, // scratchpad free on alltag
 	{ NULL,            NULL,    "watch",            0,      True,        -1 },
 	{ NULL,            NULL,    "sound",            0,      True,        -1 },
 	{ "Rox",           NULL,    "Copy",             0,      True,        -1 },
@@ -64,7 +66,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact      = 0.65; // factor of master area size [0.05..0.95]
 static const int nmaster      = 1;    // number of clients in master area
-static const Bool resizehints = True; // True means respect size hints in tiled resizals
+static const Bool resizehints = False; // True means respect size hints in tiled resizals
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -88,26 +90,43 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, "-p", "exec:", NULL };
-static const char *termcmd[]  = { "urxvtc", NULL };                                   // terminal
-static const char *scratch[]  = { "urxvtc", "-T", "scratch", "-geometry", "90x9+300+300", NULL }; // fake scratchpad
-static const char *roxcmd[]   = { "rox", NULL };                                      // gui file-manager
-static const char *filecmd[]  = { "urxvtc", "-e", "ranger", NULL };                   // cli file-manager
-static const char *editcmd[]  = { "urxvtc", "-T", "editor", "-e", "vim", NULL };      // cli editor
-static const char *geanycmd[] = { "geany", NULL };                                    // gui editor
-static const char *volcmd[]   = { "urxvtc", "-T", "sound", "-e", "alsamixer", NULL }; // volume mixer
-static const char *webcmd[]   = { "firefox", NULL };                                  // surf the web with firefox
-static const char *chatcmd[]  = { "urxvtc", "-e", "screen", "weechat-curses", NULL }; // open weechat irc client in screen/urxvtc
-static const char *zikcmd[]   = { "urxvtc", "-T", "zik-player", "-e", "mocp", NULL }; // open mocp in urxvtc
-/* menus */ 
+static const char *termcmd[]  = { "urxvtc", NULL };                                       // terminal
+static const char *scratcmd[] = { "urxvtc", "-T", "scrat", "-geometry", "90x9+200+300", NULL }; // scratchpad
+static const char *roxcmd[]   = { "rox", NULL };                                          // gui file-manager
+static const char *filecmd[]  = { "urxvtc", "-e", "ranger", NULL };                       // cli file-manager
+static const char *editcmd[]  = { "urxvtc", "-T", "editor", "-e", "vim", NULL };          // cli editor
+static const char *geanycmd[] = { "geany", NULL };                                        // gui editor
+static const char *volcmd[]   = { "urxvtc", "-T", "sound", "-e", "alsamixer", NULL };     // volume mixer
+static const char *luakcmd[]  = { "luakit", "http://arpinux.org/startarp", NULL };        // surf the web with luakit
+static const char *webcmd[]   = { "firefox", "http://arpinux.org/startarp", NULL };       // surf the web with firefox
+static const char *chatcmd[]  = { "urxvtc", "-e", "screen", "weechat-curses", NULL };     // open weechat irc client in screen/urxvtc
+static const char *zikcmd[]   = { "urxvtc", "-T", "zik-player", "-e", "mocp", NULL };     // open mocp in urxvtc
+static const char *wwallcmd[] = { "/home/arp/pics/walls/randwalls.sh", NULL };            // random classic wallpaper
+static const char *gwallcmd[] = { "/home/arp/pics/girls/randwalls.sh", NULL };            // random sexy wallpaper
+static const char *dwmccmd[]  = { "urxvtc", "-e", "vim", "pkgs/dwm_arp/config.h", NULL }; // configure dwm/config.h
+static const char *resetcmd[] = { "/home/arp/bin/reset.sh", NULL };                       // restore startup config
+static const char *infoscmd[] = { "/home/arp/bin/infos.sh", NULL };                       // display infos sytem with conky
+static const char *ckycfcmd[] = { "urxvtc", "-e", "vim", ".conkyrc_dwm", NULL };          // configure status text
+static const char *diapocmd[] = { "/home/arp/bin/watch_fam.sh", NULL };                   // diaporama phototek
+static const char *girlcmd[]  = { "/home/arp/bin/watch_nudes.sh", NULL };                 // diaporama pics/nudes
+static const char *lidiacmd[] = { "/home/arp/bin/watch_lidia.sh", NULL };                 // diaporama pics/nudes/by_girls/lidia
+/* menus */
+static const char *homecmd[]  = { "dmenu-home.sh", NULL };
+static const char *googcmd[]  = { "dmenu-google.sh", NULL };
 static const char *quitcmd[]  = { "dmenu-quit.sh", NULL };
 
 static Key keys[] = {
 	/* modifier                     key           function        argument */
+    /* menus */
+    { MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },   // dmenu           Alt+p
+    { MODKEY2,                      XK_d,         spawn,          {.v = dmenucmd } },   // dmenu           Super+d
+    { MODKEY2,                      XK_g,         spawn,          {.v = googcmd } },    // dmenu-google    Super+g
+    { MODKEY2,                      XK_h,         spawn,          {.v = homecmd } },    // dmenu-home      Super+h
     /* applications */
-	{ MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },   // dmenu           Alt+p
-	{ MODKEY2,                      XK_d,         spawn,          {.v = dmenucmd } },   // dmenu           Super+d
-    { 0,                            XK_F12,       spawn,          {.v = scratch } },    // fake scratchpad F12
-    { MODKEY,                       XK_w,         spawn,          {.v = webcmd } },     // firefox         Alt+w
+    { 0,                            XK_F12,       togglescratch,  {.v = scratcmd} },    // scratchpad      F12
+    { ControlMask,                  XK_Return,    spawn,          {.v = termcmd } },    // terminal        Ctrl+Return
+    { MODKEY,                       XK_w,         spawn,          {.v = luakcmd } },    // luakit          Alt+w
+    { MODKEY|ShiftMask,             XK_w,         spawn,          {.v = webcmd } },     // firefox         Alt+Shift+w
 	{ MODKEY,                       XK_r,         spawn,          {.v = filecmd } },    // ranger          Alt+r
 	{ MODKEY|ShiftMask,             XK_r,         spawn,          {.v = roxcmd } },     // rox-filer       Alt+Shift+r
 	{ MODKEY,                       XK_e,         spawn,          {.v = editcmd } },    // vim in urxvtc   Alt+e
@@ -115,7 +134,17 @@ static Key keys[] = {
 	{ MODKEY,                       XK_v,         spawn,          {.v = volcmd } },     // volume mixer    Alt+v
 	{ MODKEY,                       XK_z,         spawn,          {.v = zikcmd } },     // zik player      Alt+z
 	{ MODKEY,                       XK_x,         spawn,          {.v = chatcmd } },    // irc client      Alt+x
-	{ ControlMask,                  XK_Return,    spawn,          {.v = termcmd } },    // terminal        Ctrl+Return
+    /* wall */
+    { MODKEY|ControlMask,           XK_g,         spawn,          {.v = gwallcmd } },   // sexy wall       Ctrl+Alt+g
+    { MODKEY|ControlMask,           XK_w,         spawn,          {.v = wwallcmd } },   // classic wall    Ctrl+Alt+w
+    /* reset & infos */
+    { MODKEY|ControlMask,           XK_i,         spawn,          {.v = infoscmd } },   // infos system    Ctrl+Alt+i
+    { MODKEY|ControlMask,           XK_c,         spawn,          {.v = resetcmd } },   // restore config  Ctrl+Alt+c
+    /* diapo famille */
+    { MODKEY|ShiftMask|ControlMask, XK_f,         spawn,          {.v = diapocmd } },   // phototek        Ctrl+Shift+Alt+f
+    /* girls */
+    { MODKEY|ShiftMask|ControlMask, XK_g,         spawn,          {.v = girlcmd } },    // pics/nudes      Ctrl+Shift+Alt+g
+    { MODKEY|ShiftMask|ControlMask, XK_l,         spawn,          {.v = lidiacmd } },   // lidia           Ctrl+Shift+Alt+l
     /* navigation */
 	{ MODKEY,                       XK_b,         togglebar,      {0} },                // toggle bar visibility          Alt+b
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },         // focus next client              Alt+j
@@ -152,6 +181,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_egrave,                    6)
 	TAGKEYS(                        XK_underscore,                7)
 	TAGKEYS(                        XK_ccedilla,                  8)
+    { MODKEY|ShiftMask|ControlMask, XK_c,         spawn,          {.v = dwmccmd } },     // configure dwm/config.h        Ctrl+Shift+Alt+c
 	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },                 // exit/reload dwm               Alt+Shift+q
     { MODKEY|ShiftMask|ControlMask, XK_q,         spawn,          {.v = quitcmd } },     // dmenu-quit                    Ctrl+Shift+Alt+q
 };
@@ -166,6 +196,10 @@ static Button buttons[] = {
 	{ ClkLtSymbol,       0,           Button3,    setlayout,      {.v = &layouts[2]} },  // set layout 2 monocle          B3 on layout symbol
     /* on client title */
 	{ ClkWinTitle,       0,           Button1,    zoom,           {0} },                 // put client in master          B1 on client title
+	/* on status text */
+    { ClkStatusText,     0,           Button1,    spawn,          {.v = infoscmd } },    // launch infos system           B1 on status text
+    { ClkStatusText,     0,           Button2,    spawn,          {.v = resetcmd } },    // restore startup config        B2 on status text
+    { ClkStatusText,     0,           Button3,    spawn,          {.v = ckycfcmd } },    // configure status text         B3 on status text
 	/* on client window */
     { ClkClientWin,      MODKEY,      Button1,    movemouse,      {0} },                 // move client                   Alt+B1 on client
 	{ ClkClientWin,      MODKEY,      Button2,    togglefloating, {0} },                 // toggle floating               Alt+B2 on client

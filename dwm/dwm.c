@@ -239,6 +239,7 @@ static int textnw(const char *text, unsigned int len);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, Bool setfocus);
@@ -299,6 +300,8 @@ static Window root;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
+
+static unsigned int scratchpadtag = 1 << LENGTH(tags); /* This tag specially for you, Scratchpad. */
 
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
@@ -1296,6 +1299,16 @@ manage(Window w, XWindowAttributes *wa) {
 	           && (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
 	c->bw = borderpx;
 
+	if(strcmp(c->name, scratchpadname) == 0) {
+		c->tags = scratchpadtag;
+		c->isfloating = True;
+		c->x = (c->mon->mw - c->w) - 10;
+		c->y = 20;
+		c->mon->tagset[c->mon->seltags] |= c->tags;
+	} else { /* make sure non-scratchpads stay out of scratchpadtag */
+		c->tags &= TAGMASK;
+	}
+
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
 	XSetWindowBorder(dpy, w, dc.norm[ColBorder]);
@@ -1985,6 +1998,24 @@ togglefloating(const Arg *arg) {
 }
 
 void
+togglescratch(const Arg *arg) {
+  Client *c = NULL;
+  unsigned int found = 0;
+  /* check if a scratchpad is already there in scratchpadtag */
+  for(c = selmon->clients; c && !(found = c->tags & scratchpadtag); c = c->next);
+  if(!found) { /* not found: launch it and put it in its tag (see manage()) */
+    spawn(arg);
+    return;
+  }
+  unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchpadtag;
+  if(newtagset) {
+    selmon->tagset[selmon->seltags] = newtagset;
+    arrange(selmon);
+  }
+  focus(c);
+}
+
+void
 toggletag(const Arg *arg) {
 	unsigned int newtags;
 
@@ -2323,8 +2354,9 @@ void
 view(const Arg *arg) {
 	int i;
 	unsigned int tmptag;
+    unsigned int stag = selmon->tagset[selmon->seltags] & scratchpadtag;
 
-	if((arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
+	if((arg->ui & TAGMASK) == (selmon->tagset[selmon->seltags] & TAGMASK))
 		return;
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	if(arg->ui & TAGMASK) {
@@ -2344,6 +2376,7 @@ view(const Arg *arg) {
 	selmon->nmaster = selmon->pertag->nmasters[selmon->pertag->curtag];
 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag];
 	selmon->sellt = selmon->pertag->sellts[selmon->pertag->curtag];
+    selmon->tagset[selmon->seltags] |= stag;
 	selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt];
 	selmon->lt[selmon->sellt^1] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt^1];
 	if (selmon->showbar != selmon->pertag->showbars[selmon->pertag->curtag])
