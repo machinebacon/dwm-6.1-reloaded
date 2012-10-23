@@ -78,7 +78,6 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod1Mask
-#define MODKEY2 Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -101,27 +100,13 @@ static const char *luakcmd[]  = { "luakit", "http://arpinux.org/startarp", NULL 
 static const char *webcmd[]   = { "firefox", "http://arpinux.org/startarp", NULL };       // surf the web with firefox
 static const char *chatcmd[]  = { "urxvtc", "-e", "screen", "weechat-curses", NULL };     // open weechat irc client in screen/urxvtc
 static const char *zikcmd[]   = { "urxvtc", "-T", "zik-player", "-e", "mocp", NULL };     // open mocp in urxvtc
-static const char *wwallcmd[] = { "/home/arp/pics/walls/randwalls.sh", NULL };            // random classic wallpaper
-static const char *gwallcmd[] = { "/home/arp/pics/girls/randwalls.sh", NULL };            // random sexy wallpaper
-static const char *dwmccmd[]  = { "urxvtc", "-e", "vim", "pkgs/dwm_arp/config.h", NULL }; // configure dwm/config.h
-static const char *resetcmd[] = { "/home/arp/bin/reset.sh", NULL };                       // restore startup config
-static const char *infoscmd[] = { "/home/arp/bin/infos.sh", NULL };                       // display infos sytem with conky
-static const char *ckycfcmd[] = { "urxvtc", "-e", "vim", ".conkyrc_dwm", NULL };          // configure status text
-static const char *diapocmd[] = { "/home/arp/bin/watch_fam.sh", NULL };                   // diaporama phototek
-static const char *girlcmd[]  = { "/home/arp/bin/watch_nudes.sh", NULL };                 // diaporama pics/nudes
-static const char *lidiacmd[] = { "/home/arp/bin/watch_lidia.sh", NULL };                 // diaporama pics/nudes/by_girls/lidia
 /* menus */
-static const char *homecmd[]  = { "dmenu-home.sh", NULL };
-static const char *googcmd[]  = { "dmenu-google.sh", NULL };
 static const char *quitcmd[]  = { "dmenu-quit.sh", NULL };
 
 static Key keys[] = {
 	/* modifier                     key           function        argument */
     /* menus */
     { MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },   // dmenu           Alt+p
-    { MODKEY2,                      XK_d,         spawn,          {.v = dmenucmd } },   // dmenu           Super+d
-    { MODKEY2,                      XK_g,         spawn,          {.v = googcmd } },    // dmenu-google    Super+g
-    { MODKEY2,                      XK_h,         spawn,          {.v = homecmd } },    // dmenu-home      Super+h
     /* applications */
     { 0,                            XK_F12,       togglescratch,  {.v = scratcmd} },    // scratchpad      F12
     { ControlMask,                  XK_Return,    spawn,          {.v = termcmd } },    // terminal        Ctrl+Return
@@ -134,17 +119,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_v,         spawn,          {.v = volcmd } },     // volume mixer    Alt+v
 	{ MODKEY,                       XK_z,         spawn,          {.v = zikcmd } },     // zik player      Alt+z
 	{ MODKEY,                       XK_x,         spawn,          {.v = chatcmd } },    // irc client      Alt+x
-    /* wall */
-    { MODKEY|ControlMask,           XK_g,         spawn,          {.v = gwallcmd } },   // sexy wall       Ctrl+Alt+g
-    { MODKEY|ControlMask,           XK_w,         spawn,          {.v = wwallcmd } },   // classic wall    Ctrl+Alt+w
-    /* reset & infos */
-    { MODKEY|ControlMask,           XK_i,         spawn,          {.v = infoscmd } },   // infos system    Ctrl+Alt+i
-    { MODKEY|ControlMask,           XK_c,         spawn,          {.v = resetcmd } },   // restore config  Ctrl+Alt+c
-    /* diapo famille */
-    { MODKEY|ShiftMask|ControlMask, XK_f,         spawn,          {.v = diapocmd } },   // phototek        Ctrl+Shift+Alt+f
-    /* girls */
-    { MODKEY|ShiftMask|ControlMask, XK_g,         spawn,          {.v = girlcmd } },    // pics/nudes      Ctrl+Shift+Alt+g
-    { MODKEY|ShiftMask|ControlMask, XK_l,         spawn,          {.v = lidiacmd } },   // lidia           Ctrl+Shift+Alt+l
     /* navigation */
 	{ MODKEY,                       XK_b,         togglebar,      {0} },                // toggle bar visibility          Alt+b
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },         // focus next client              Alt+j
@@ -181,7 +155,6 @@ static Key keys[] = {
 	TAGKEYS(                        XK_egrave,                    6)
 	TAGKEYS(                        XK_underscore,                7)
 	TAGKEYS(                        XK_ccedilla,                  8)
-    { MODKEY|ShiftMask|ControlMask, XK_c,         spawn,          {.v = dwmccmd } },     // configure dwm/config.h        Ctrl+Shift+Alt+c
 	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },                 // exit/reload dwm               Alt+Shift+q
     { MODKEY|ShiftMask|ControlMask, XK_q,         spawn,          {.v = quitcmd } },     // dmenu-quit                    Ctrl+Shift+Alt+q
 };
