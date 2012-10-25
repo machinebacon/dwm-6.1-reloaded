@@ -102,17 +102,12 @@ static const char *filecmd[]  = { "urxvtc", "-e", "ranger", NULL };             
 static const char *editcmd[]  = { "urxvtc", "-T", "vim", "-e", "vim", NULL };             // cli editor
 static const char *geanycmd[] = { "geany", NULL };                                        // gui editor
 static const char *volcmd[]   = { "urxvtc", "-T", "sound", "-e", "alsamixer", NULL };     // volume mixer
-static const char *luakcmd[]  = { "luakit", "http://arpinux.org/startarp", NULL };        // surf the web with luakit
-static const char *webcmd[]   = { "firefox", "http://arpinux.org/startarp", NULL };       // surf the web with firefox
+static const char *luakcmd[]  = { "luakit", ".startpage/index.html", NULL };              // surf the web with luakit
+static const char *webcmd[]   = { "firefox", ".startpage/index.html", NULL };             // surf the web with firefox
 static const char *chatcmd[]  = { "urxvtc", "-e", "screen", "weechat-curses", NULL };     // open weechat irc client in screen/urxvtc
 static const char *zikcmd[]   = { "urxvtc", "-T", "zik-player", "-e", "mocp", NULL };     // open mocp in urxvtc
-static const char *wwallcmd[] = { "/home/arp/pics/walls/randwalls.sh", NULL };            // random classic wallpaper
-static const char *gwallcmd[] = { "/home/arp/pics/girls/randwalls.sh", NULL };            // random sexy wallpaper
-static const char *dwmccmd[]  = { "urxvtc", "-e", "vim", "pkgs/dwm_arp/config.h", NULL }; // configure dwm/config.h
-static const char *resetcmd[] = { "/home/arp/bin/reset.sh", NULL };                       // restore startup config
-static const char *infoscmd[] = { "/home/arp/bin/infos.sh", NULL };                       // display infos sytem with conky
-static const char *ckycfcmd[] = { "urxvtc", "-e", "vim", ".conkyrc_dwm", NULL };          // configure status text
 /* menus */
+static const char *deskmenu[] = { "compiz-deskmenu", NULL };
 static const char *homecmd[]  = { "dmenu-home.sh", NULL };
 static const char *googcmd[]  = { "dmenu-google.sh", NULL };
 static const char *quitcmd[]  = { "dmenu-quit.sh", NULL };
@@ -136,12 +131,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_v,         spawn,          {.v = volcmd } },     // volume mixer    Alt+v
 	{ MODKEY,                       XK_z,         spawn,          {.v = zikcmd } },     // zik player      Alt+z
 	{ MODKEY,                       XK_x,         spawn,          {.v = chatcmd } },    // irc client      Alt+x
-    /* wall */
-    { MODKEY|ControlMask,           XK_g,         spawn,          {.v = gwallcmd } },   // sexy wall       Ctrl+Alt+g
-    { MODKEY|ControlMask,           XK_w,         spawn,          {.v = wwallcmd } },   // classic wall    Ctrl+Alt+w
-    /* reset & infos */
-    { MODKEY|ControlMask,           XK_i,         spawn,          {.v = infoscmd } },   // infos system    Ctrl+Alt+i
-    { MODKEY|ControlMask,           XK_c,         spawn,          {.v = resetcmd } },   // restore config  Ctrl+Alt+c
     /* navigation */
 	{ MODKEY,                       XK_b,         togglebar,      {0} },                // toggle bar visibility          Alt+b
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },         // focus next client              Alt+j
@@ -180,7 +169,6 @@ static Key keys[] = {
 	TAGKEYS(                        XK_egrave,                    6)
 	TAGKEYS(                        XK_underscore,                7)
 	TAGKEYS(                        XK_ccedilla,                  8)
-    { MODKEY|ShiftMask|ControlMask, XK_c,         spawn,          {.v = dwmccmd } },     // configure dwm/config.h        Ctrl+Shift+Alt+c
 	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },                 // exit/reload dwm               Alt+Shift+q
     { MODKEY|ShiftMask|ControlMask, XK_q,         spawn,          {.v = quitcmd } },     // dmenu-quit                    Ctrl+Shift+Alt+q
 };
@@ -207,7 +195,9 @@ static Button buttons[] = {
     { ClkTagBar,         0,           Button1,    view,           {0} },                 // view tag [n]                  B1 on tag [n]
 	{ ClkTagBar,         0,           Button3,    toggleview,     {0} },                 // toggle viewtag [n]            B3 on tag [n]
 	{ ClkTagBar,         MODKEY,      Button1,    tag,            {0} },                 // tag client with tag [n]       Alt+B1 on tag [n]
-	{ ClkTagBar,         MODKEY,      Button3,    toggletag,      {0} },                 // toggle tag client with [n]    1lt+B3 on tag [n]
+	{ ClkTagBar,         MODKEY,      Button3,    toggletag,      {0} },                 // toggle tag client with [n]    Alt+B3 on tag [n]
+    /* on root window */
+    { ClkRootWin,        0,           Button3,    spawn,          {.v = deskmenu } },    // open deskmenu                 B3 on root window
 };
 
 /* EOF */
