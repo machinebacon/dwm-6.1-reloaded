@@ -183,10 +183,6 @@ static Button buttons[] = {
 	{ ClkLtSymbol,       0,           Button3,    setlayout,      {.v = &layouts[2]} },  // set layout 2 monocle          B3 on layout symbol
     /* on client title */
 	{ ClkWinTitle,       0,           Button1,    zoom,           {0} },                 // put client in master          B1 on client title
-	/* on status text */
-    { ClkStatusText,     0,           Button1,    spawn,          {.v = infoscmd } },    // launch infos system           B1 on status text
-    { ClkStatusText,     0,           Button2,    spawn,          {.v = resetcmd } },    // restore startup config        B2 on status text
-    { ClkStatusText,     0,           Button3,    spawn,          {.v = ckycfcmd } },    // configure status text         B3 on status text
 	/* on client window */
     { ClkClientWin,      MODKEY,      Button1,    movemouse,      {0} },                 // move client                   Alt+B1 on client
 	{ ClkClientWin,      MODKEY,      Button2,    togglefloating, {0} },                 // toggle floating               Alt+B2 on client
