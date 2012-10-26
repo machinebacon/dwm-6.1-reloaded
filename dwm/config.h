@@ -52,6 +52,7 @@ static const Rule rules[] = {
 	{ "XCalc",         NULL,    NULL,               0,      True,        -1 }, // xcalc free notag
 	{ "Lpx2",          NULL,    NULL,               0,      True,        -1 }, // pix-viewer free notag
 	{ "MPlayer",       "xv",    NULL,               0,      True,        -1 }, // mplayer free notag
+	{ "MPlayer",       "x11",   NULL,               0,      True,        -1 }, // mplayer free notag
 	{ "Gnome-mplayer", NULL,    NULL,               0,      True,        -1 },
 	{ "File-roller",   NULL,    NULL,               0,      True,        -1 },
 	{ "Zenity",        NULL,    NULL,               0,      True,        -1 },
