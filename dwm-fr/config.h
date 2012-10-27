@@ -3,6 +3,7 @@
 /* dwm-arp v2 based on dwm_6.1
  * patches & mods :
  * attachabove          http://dwm.suckless.org/patches/attachabove
+ * azertykeys           http://dwm.suckless.org/patches/azertykey
  * bottomstack          http://dwm.suckless.org/patches/bottom_stack
  * fancybar             http://dwm.suckless.org/patches/fancybar
  * float_border_color   http://dwm.suckless.org/patches/float_border_color
@@ -160,15 +161,15 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Up,        tagmon,         {.i = +1 } },         // tag next screen                Alt+Shift+Up
     { ControlMask,                  XK_Left,      view_prev_tag,  {0} },                // previous tag                   Ctrl+Left
     { ControlMask,                  XK_Right,     view_next_tag,  {0} },                // next tag                       Ctrl+Right
-	TAGKEYS(                        XK_1,                         0)
-	TAGKEYS(                        XK_2,                         1)                    // view tag [n]                   Alt+[n]
-    TAGKEYS(                        XK_3,                         2)                    // tag [n] client                 Alt+Shift+[n]
-	TAGKEYS(                        XK_4,                         3)                    // toggleview tag [n]             Ctrl+Alt+[n]
-	TAGKEYS(                        XK_5,                         4)                    // toggletag tag [n]              Atrl+Shift+Alt+[n]
-	TAGKEYS(                        XK_6,                         5)
-	TAGKEYS(                        XK_7,                         6)
-	TAGKEYS(                        XK_8,                         7)
-	TAGKEYS(                        XK_9,                         8)
+	TAGKEYS(                        XK_ampersand,                 0)
+	TAGKEYS(                        XK_eacute,                    1)                    // view tag [n]                   Alt+[n]
+    TAGKEYS(                        XK_quotedbl,                  2)                    // tag [n] client                 Alt+Shift+[n]
+	TAGKEYS(                        XK_apostrophe,                3)                    // toggleview tag [n]             Ctrl+Alt+[n]
+	TAGKEYS(                        XK_parenleft,                 4)                    // toggletag tag [n]              Atrl+Shift+Alt+[n]
+	TAGKEYS(                        XK_minus,                     5)
+	TAGKEYS(                        XK_egrave,                    6)
+	TAGKEYS(                        XK_underscore,                7)
+	TAGKEYS(                        XK_ccedilla,                  8)
 	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },                 // exit/reload dwm               Alt+Shift+q
     { MODKEY|ShiftMask|ControlMask, XK_q,         spawn,          {.v = quitcmd } },     // dmenu-quit                    Ctrl+Shift+Alt+q
 };
